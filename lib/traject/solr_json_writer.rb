@@ -160,7 +160,7 @@ class Traject::SolrJsonWriter
       # no body, local variable exception set above will be used below
     end
 
-    if exception || resp.status != 200
+     if exception || (resp.status != 200 && resp.status != 409)
       if exception
         msg = Traject::Util.exception_to_log_message(exception)
       else
