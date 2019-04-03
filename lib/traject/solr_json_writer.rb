@@ -160,7 +160,7 @@ class Traject::SolrJsonWriter
       # no body, local variable exception set above will be used below
     end
 
-     if exception || (resp.status != 200 && resp.status != 409)
+     if exception || (resp.status != 200)
       if exception
         msg = Traject::Util.exception_to_log_message(exception)
       else
@@ -170,7 +170,10 @@ class Traject::SolrJsonWriter
       logger.debug("\t" + exception.backtrace.join("\n\t")) if exception
       logger.debug(c.source_record.to_s) if c.source_record
 
-      @skipped_record_incrementer.increment
+      if exception || (resp.status != 409)
+        @skipped_record_incrementer.increment
+      end
+       
       if @max_skipped and skipped_record_count > @max_skipped
         raise MaxSkippedRecordsExceeded.new("#{self.class.name}: Exceeded maximum number of skipped records (#{@max_skipped}): aborting")
       end
